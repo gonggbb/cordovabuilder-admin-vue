@@ -14,9 +14,26 @@
     >
       nodejs
     </button>
-    <button class="btn btn-lg btn-circle">B</button>
-    <button class="btn btn-lg btn-circle">C</button>
-    <button class="btn btn-lg btn-circle">D</button>
+    <!-- Temurin https://github.com/adoptium/temurin17-binaries/releases -->
+    <button
+      class="btn btn-lg btn-circle"
+      @click="() => window.open('https://adoptium.net/temurin/release-notes', '_blank')"
+    >
+      Temurin Release Notes
+    </button>
+
+    <button
+      class="btn btn-lg btn-circle"
+      @click="() => window.open('https://developer.android.com/studio/archive', '_blank')"
+    >
+      Android Studio Archive
+    </button>
+    <button
+      class="btn btn-lg btn-circle"
+      @click="() => window.open('https://gradle.org/releases/', '_blank')"
+    >
+      Gradle Releases
+    </button>
   </div>
 </template>
 
