@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { fetchCordovaPresets } from '@/api/cordova'
-import type { CordovaConfig, CordovaPresetResponse } from '@/type'
+import type { CordovaConfig, CordovaPresetsApiResponse } from '@/type'
 
 export const useCordovaStore = defineStore('cordova', () => {
   const configs = ref<CordovaConfig[]>([])
@@ -17,11 +17,12 @@ export const useCordovaStore = defineStore('cordova', () => {
     error.value = null
 
     try {
-      const data: CordovaPresetResponse[] = await fetchCordovaPresets()
+      const data: CordovaPresetsApiResponse = await fetchCordovaPresets()
+      console.log('🚀 ~ loadConfigs ~ data:', data)
 
-      // 转换 API 返回的数据格式
-      configs.value = data.map((item) => ({
-        name: item.name,
+      // 转换 API 返回的对象格式数据为数组
+      configs.value = Object.entries(data.presets).map(([key, item]) => ({
+        name: item.name || key,
         description: item.description,
         cordovaVersion: item.cordovaVersion,
         cordovaAndroid: item.cordovaAndroid,
@@ -81,7 +82,7 @@ export const useCordovaStore = defineStore('cordova', () => {
     const javaPath = `/opt/java/java`
     const nodePath = `/opt/nodejs/node`
     const gradlePath = `/opt/gradle/gradle`
-    
+
     const commands = [
       `# Cordova 预设: ${config.name}`,
       `# Java ${config.profile.java} | Node.js ${config.profile.node} | Gradle ${config.profile.gradle}`,

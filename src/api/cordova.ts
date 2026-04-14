@@ -1,9 +1,10 @@
-import type { CordovaPresetResponse } from '@/type'
+import type { CordovaPresetsApiResponse } from '@/type'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
 
-export async function fetchCordovaPresets(): Promise<CordovaPresetResponse[]> {
+export async function fetchCordovaPresets(): Promise<CordovaPresetsApiResponse> {
   const response = await fetch(`${API_BASE_URL}/env/cordova-presets`)
+  console.log('🚀 ~ fetchCordovaPresets ~ response:', response)
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`)

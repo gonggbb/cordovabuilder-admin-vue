@@ -29,70 +29,26 @@
             <span>在 Docker 容器中执行以下命令来设置环境变量</span>
           </div>
 
-          <!-- 选项卡切换 -->
-          <div class="tabs tabs-boxed mb-4">
-            <a
-              class="tab"
-              :class="{ 'tab-active': activeTab === 'commands' }"
-              @click="activeTab = 'commands'"
-            >
-              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <!-- 命令查看区域 -->
+          <div class="mockup-code bg-base-300 mb-4 overflow-x-auto language-bash hljs">
+            <pre><code>{{ cordovaStore.envCommands }}</code></pre>
+          </div>
+
+          <div class="flex gap-2 justify-end">
+            <button class="btn btn-sm btn-outline" @click="copyToClipboard()">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                ></path>
               </svg>
-              查看命令
-            </a>
-            <a
-              class="tab"
-              :class="{ 'tab-active': activeTab === 'terminal' }"
-              @click="activeTab = 'terminal'"
-            >
-              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
-              SSH 终端
-            </a>
-          </div>
-
-          <!-- 命令查看模式 -->
-          <div v-if="activeTab === 'commands'">
-            <div class="mockup-code bg-base-300 mb-4 overflow-x-auto language-bash hljs">
-              <pre><code>{{ cordovaStore.envCommands }}</code></pre>
-            </div>
-
-            <div class="flex gap-2 justify-end">
-              <button class="btn btn-sm btn-outline" @click="copyToClipboard()">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  ></path>
-                </svg>
-                复制
-              </button>
-              <button class="btn btn-primary btn-sm" @click="cordovaStore.hideEnvCommands()">
-                关闭
-              </button>
-            </div>
-          </div>
-
-          <!-- SSH 终端模式 -->
-          <div v-else>
-            <SshTerminal
-              :initial-commands="cordovaStore.envCommands"
-              @close="activeTab = 'commands'"
-            />
+              复制
+            </button>
+            <button class="btn btn-primary btn-sm" @click="cordovaStore.hideEnvCommands()">
+              关闭
+            </button>
           </div>
         </div>
       </div>
@@ -200,8 +156,8 @@
             <span class="font-mono font-medium">{{ config.buildTools }}</span>
           </div>
           <div class="flex justify-between items-center py-1 border-b border-base-200">
-            <span class="opacity-60">SDK:</span>
-            <span class="font-mono font-medium">{{ config.profile.sdk }}</span>
+            <span class="opacity-60">Platform SDK:</span>
+            <span class="font-mono font-medium">{{ config.profile.platform_sdk }}</span>
           </div>
           <div class="flex justify-between items-center py-1 border-b border-base-200">
             <span class="opacity-60">Gradle:</span>
@@ -214,6 +170,14 @@
           <div class="flex justify-between items-center py-1">
             <span class="opacity-60">Node.js:</span>
             <span class="font-mono font-medium">{{ config.profile.node }}</span>
+          </div>
+          <div class="flex justify-between items-center py-1">
+            <span class="opacity-60">Cmdline Tools:</span>
+            <span class="font-mono font-medium">{{ config.profile.cmdline_version }}</span>
+          </div>
+          <div class="flex justify-between items-center py-1">
+            <span class="opacity-60">Cmdline Serial:</span>
+            <span class="font-mono font-medium">{{ config.profile.cmdline_serial }}</span>
           </div>
         </div>
 
@@ -301,14 +265,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, nextTick, watch, ref } from 'vue'
+import { onMounted, nextTick, watch } from 'vue'
 import { useCordovaStore } from '@/stores/cordova.ts'
-import SshTerminal from '@/components/SshTerminal.vue'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-dark.css'
 
 const cordovaStore = useCordovaStore()
-const activeTab = ref<'commands' | 'terminal'>('commands')
 
 // 组件挂载时加载配置
 onMounted(() => {
@@ -320,7 +282,6 @@ watch(
   () => cordovaStore.showEnvCommands,
   (newValue) => {
     if (newValue) {
-      activeTab.value = 'commands' // 重置为命令查看模式
       nextTick(() => {
         const codeElement = document.querySelector('pre code')
         if (codeElement) {

@@ -44,7 +44,7 @@ pnpm dev
 
 ### 3. 后端 API 服务
 
-确保后端 API 服务运行在 `http://localhost:3001`，并提供以下接口：
+确保后端 API 服务运行在 `http://localhost:3000`，并提供以下接口：
 
 #### GET /env/cordova-presets
 
@@ -91,7 +91,7 @@ pnpm dev
 
 ```bash
 # 开发环境
-VITE_API_BASE_URL=http://localhost:3001
+VITE_API_BASE_URL=http://localhost:3000
 
 # 生产环境
 VITE_API_BASE_URL=http://your-api-server.com
@@ -103,7 +103,7 @@ VITE_API_BASE_URL=http://your-api-server.com
 
 ```typescript
 // src/api/cordova.ts
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
 
 export async function fetchCordovaPresets() {
   const response = await fetch(`${API_BASE_URL}/env/cordova-presets`)
@@ -199,7 +199,7 @@ pnpm format
 
 ### 无法加载配置
 
-1. 检查后端服务是否运行在配置的地址（默认 `http://localhost:3001`）
+1. 检查后端服务是否运行在配置的地址（默认 `http://localhost:3000`）
 2. 打开浏览器开发者工具，查看 Network 标签中的请求状态
 3. 检查控制台是否有 CORS 错误信息
 4. 确认后端已正确配置跨域支持
